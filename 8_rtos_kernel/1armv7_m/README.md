@@ -1,7 +1,7 @@
 ---
 sort: 1
 ---
-# Cortex-M3 
+# Cortex-M3 内核 
 
 和微机原理与接口技术一样的内容，学习 cortxm3 的各种东西，芯片为 STM32。
 
