@@ -106,7 +106,7 @@ struct rt_sensor_config
 此结构体中的其他配置信息都在驱动完成。`rt_hw_sr04_init` 为驱动提供给应用层提供的初始化接口。
 
 
-## 传感器驱动
+## 传感器驱动注册
 
 驱动开发中最核心的即实现传感器底层的 read 方法。
 
@@ -197,29 +197,57 @@ __exit:
 
 ```
 
+这个驱动初始化函数中调用了 `rt_hw_sensor_register` 来完成**注册**，即把传感器名字、描述传感器的数据结构、等信息告诉内核，由内核关联起来。
 
 
+## 驱动的实现
 
+传感器类中，有个 `struct rt_sensor_ops` ，驱动开发的核心即实现此结构体中的操作。rtthread 的传感器操作方法比较少，相对 linux 来说要容易不少。
 
 ```c
-struct rt_sensor_device
+struct rt_sensor_ops
 {
-    struct rt_device             parent;    /* The standard device */
-
-    struct rt_sensor_info        info;      /* The sensor info data */
-    struct rt_sensor_config      config;    /* The sensor config data */
-
-    void                        *data_buf;  /* The buf of the data received */
-    rt_size_t                    data_len;  /* The size of the data received */
-
-    const struct rt_sensor_ops  *ops;       /* The sensor ops */
-
-    struct rt_sensor_module     *module;    /* The sensor module */
-
-    rt_err_t (*irq_handle)(rt_sensor_t sensor);             /* Called when an interrupt is generated, registered by the driver */
+    rt_size_t (*fetch_data)(struct rt_sensor_device *sensor, void *buf, rt_size_t len);
+    rt_err_t (*control)(struct rt_sensor_device *sensor, int cmd, void *arg);
 };
 ```
 
+在传感器使用时，rt_device_read 最终调用的就是 fetch_data 指向的函数。实现的时候关注传入的参数以及返回值。
+
+```c
+static rt_size_t temp_sensor_fetch_data(struct rt_sensor_device* sensor, void* buf, rt_size_t size)
+{
+    struct rt_sensor_data* data = buf;
+    rt_int16_t max_range = 0;
+
+    if (size < 1)
+    {
+        LOG_E("%s:read size err! size=%d", __func__, size);
+        return 0;
+    }
+
+    if (buf == RT_NULL)
+    {
+        LOG_E("%s:read buf is NULL!", __func__);
+        return 0;
+    }
+
+    max_range = temp_info_tbl[SENS_TEMP_01].range_max - temp_info_tbl[SENS_TEMP_01].range_min;
+
+    for (int i = 0; i < size; i++)
+    {
+        data->type = RT_SENSOR_CLASS_TEMP;
+        data->data.temp = rand() % max_range + temp_info_tbl[SENS_TEMP_01].range_min;
+        data->timestamp = rt_sensor_get_ts();
+        LOG_D("%s:%d", __func__, data->data.temp);
+        data++;
+    }
+
+    return size;
+}
+
+```
 
 
+这些东西实现以后，就已经可以用了，
 
