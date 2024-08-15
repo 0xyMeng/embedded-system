@@ -1,49 +1,73 @@
+![GitHub last commit](https://badgen.net/github/last-commit/xym-ee/embedded-system/gitbook)
+![Github stars](https://badgen.net/github/stars/xym-ee/embedded-system)
+![Github forks](https://badgen.net/github/forks/xym-ee/embedded-system)
+![Github commits](https://badgen.net/github/commits/xym-ee/embedded-system/gitbook)
+![License](https://badgen.net/badge/license/CC-BY-NC-SA%204.0/blue)
 
-![GitHub last commit](https://badgen.net/github/last-commit/xym-ee/embedded-system/main)
-![Github commits](https://badgen.net/github/commits/xym-ee/embedded-system/main)
-![no problems](https://badgen.net/badge/no%20problem/(maybe)/red)
+---
 
-嵌入式系统学习。
+*感谢访问我的学习笔记。*
 
-[如何学习嵌入式系统？ - 知乎](https://www.zhihu.com/question/19688487/answer/32217959)
+*如果是在GitHub看到这些内容，那么可以前往[独立网页](https://embedded.xym.work/)获得更好的浏览体验。*
 
-这个回答下面还有个回答：
+*如果觉得我的笔记内容对您有帮助，那我会感到非常开心。*
 
-如果是学计算机的，那么学嵌入式不会有门槛。
+最重要的**如果我在内容上有理解错误，或者表达不严谨，还请不吝指正。**
 
-如果不是学计算机的，那么忘了嵌入式，先学习计算机。
+我的联系方式(微信/QQ)请查看[个人主页](https://xym.work)，欢迎朋友们互相交流、一起学习。
+
+---
+
+我是电气自动化专业出身，最早接触编程相关东西的是 51 单片机，但是这个笔记的标题为<计算机与嵌入式开发>，来自于知乎[如何学习嵌入式系统？](https://www.zhihu.com/question/19688487/answer/32217959)下的一个回答：
+
+**如果是学计算机的，那么学嵌入式不会有门槛。如果不是学计算机的，那么忘了嵌入式，先学习计算机。**
+
+出于对嵌入式的兴趣，以及想弄清楚一块芯片工作原理的好奇心，开始一些计算机课程的学习...
 
 
-## 这个笔记的框架
-
-
-- [ ] MCU 裸机开发，8051、MSP430、arm 内核的 STM32、NXP i.mx rt 等
+- [ ] 1-1.编程语言、编译过程、数据结构与算法基础
+- [ ] 1-2.计算机系统基础 CSAPP
+- [ ] 1-3.数字电路、计算机组成原理、steam：图灵完备
+- [ ] 1-4.计算机网络
+- [ ] 1-5.操作系统原理
+- [ ] 2-1.裸机开发，arm cortex-m cortex-a7
   - [ ] 通信接口
-  - [ ] 8bit、16bit mcu
-  - [ ] arm 芯片开发，芯片本身，外设，固件库的使用等
-  - [ ] 软件框架，系统架构，(状态机、订阅发布、事件触发、任务调度)
-- [ ] 中等规模系统开发，编程思维(C 语言 OOP 思想)
+  - [ ] arm 芯片开发，基于 IDE、gcc 裸机开发
+- [ ] 2-2.中等规模系统开发，编程思维(C 语言 OOP 思想)
   - [ ] 裸机 LVGL 图形库
+  - [ ] 裸机开发，软件框架，系统架构，(状态机、订阅发布、事件触发、任务调度)
   - [ ] 基于 rtos 开发 (rt-thread 和 freeRTOS)
-- [ ] ARMv7-M 架构与 RTOS 原理
+- [ ] 2-3.ARMv7-M 架构与 RTOS 原理
   - [ ] Cortex-M3 内核，指令集、中断、体系结构等
   - [ ] rt-thread 内核、驱动
-- [ ] linux 应用开发(系统编程+GUI)
+- [ ] 3-1.linux 应用开发(系统编程+GUI)
   - [ ] ubuntu 相关、linux 使用、
   - [ ] shell 编程、vim、gcc、makefile
   - [ ] 网络编程、多线程
-- [ ] Linux 驱动开发
+- [ ] 3-2.linux 镜像构建
   - [ ] linux 系统构建：bootloader、kernel、device tree、root filesystem
-  - [ ] 各种驱动框架
+- [ ] 3-3.linux 驱动开发
+  - [ ] 字符设备驱动
+  - [ ] 设备树
 
+## 修改记录
 
-
+- 2024-08-15 整理到 gitbook，框架修改
 
 
 ## 嵌入式系统
 
-(2024.6)
+(2024.8)
 
+学习了一段时间 linux 驱动开发后，重新回头来看 MCU 和 RTOS。
+
+rtthread 上的驱动设计应该是参考了 linux 驱动的，以及 menuconfig 、项目构建之类的，了解一些 linux 驱动回头看 rtthread 的源码，感觉要通透不少。比如设备注册，在 linux 驱动里，我只是用了注册函数，但是在 rtthread 里可以直接跳转去看注册函数干了什么事情(linux 也可以跳进 kernel 看，但是代码很多)，并且 rtthread 足够简单，每个层次的注册函数源码都很好读。注册在做的事情：填充设备对应结构体的参数，即完善描述设备的结构体，将足够的信息传递给内核，以便用户使用。在软件架构上，一层层抽象上去，每一层都有自己的注册函数，需要向上一层注册。这个顺序正好和继承是反着来的。比如内核对象派生了设备类，设备类派生了 PIN 类，然后驱动工程师可以自己基于 PIN 类派生一个 stm_pin 的类，初始化时，stm_pin 向 PIN 层注册，PIN 层中向设备对象层注册，设备对象层向内核对象层注册。
+
+此外 liunx 开发都是直接用交叉编译工具和 makefile 开发，MCU 开发大多都使用 IDE 如 Keil IAR。但是 STM32 也可以用 gcc 来开发，在这个过程中，控制代码的每一个细节，如第一行代码所在的位置，自己填充中断向量表，并且理解内存映射 IO 如何对着 datesheet 来使用芯片，了解 C 语言的一些硬件特性(比如 volatile)，熟悉编译过程(i++ 延时的 O2 编译优化)，。做这个事情我觉得是有必要的，熟悉这一套流程，可以做到在一块基于 arm 设计的全新芯片上只对着芯片手册使用芯片。
+
+当然主要还是基于实际出发，linux 开发 uboot kernel driver 都是用交叉编译工具、makefile 对着手册来，但是这些项目这么多年已经很大了，想搞懂每个细节对初学者很不友好。所以对我来说，不妨用一个我自己熟悉的芯片(stm32)、他足够简单、功能足够完整，能让我一个人完成整套流程又不至于花非常大的精力。所以当我完整的理解了这个小系统的工作原理，我在调试更复杂的芯片的时候会更有信心，虽然他更大更复杂，但是芯片、或者说计算机系统在原理上是相通的，工具上也是通用的，调试复杂芯片也会有种似曾相识的感觉，面对新的芯片也会很自信。
+
+学习一个新东西，先保持好奇心学一个小的、简单的、容易理解的、原理上又相通的，然后再去看大的、复杂的、有挑战性的、面向实际应用的东西，在遇到问题时，也会有一个原理上的指导方向，这是我的学习方法。
 
 (2023.7)
 
