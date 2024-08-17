@@ -1,6 +1,9 @@
 ---
 sort: 1
 ---
+## 计算机组成(or设计)，steam：图灵完备
+
+
 # 计算机是怎么工作的？
 
 BUT HOW DO IT KNOW?
