@@ -64,7 +64,7 @@ WHY WHAT HOW
 
 ## 什么是操作系统
 
-Operating System: A body of software, in fact, that is responsible for m*aking it easy to run programs* (even allowing you to seemingly run many at the same time), allowing programs to share memory, enabling programs to interact with devices, and other fun stuff like that. (OSTEP)
+Operating System: A body of software, in fact, that is responsible for *making it easy to run programs* (even allowing you to seemingly run many at the same time), allowing programs to share memory, enabling programs to interact with devices, and other fun stuff like that. (OSTEP)
 
 操作系统是一个软件体，让应用程序更容易的运行起来（甚至允许您似乎同时运行多个程序），允许程序共享内存，允许程序与设备交互，以及其他类似的有趣的东西。
 
