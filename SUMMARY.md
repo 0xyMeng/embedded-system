@@ -2,6 +2,12 @@
 
 - [计算机与嵌入式开发学习](README.md)
 - [1-1.编程基础](./1_program_basic/README.md)
+  - [基本工具和使用](./1_program_basic/6_missing_class/README.md)
+    - [shell](./1_program_basic/6_missing_class/1_shell.md)
+    - [shell 脚本](./1_program_basic/6_missing_class/2_shell_script.md)
+    - [vim 编辑器](./1_program_basic/6_missing_class/3_vim.md)
+    - [命令行数据整理](./1_program_basic/6_missing_class/4_data.md)
+    - [命令行环境和配置](./1_program_basic/6_missing_class/5_shell_env.md)
 - [1-2.计算机系统基础(CSAPP)](./2_csapp/README.md)
   - [1.计算机基础](./2_csapp/1计算机基础.md)
   - [2.数据的表示](./2_csapp/2数据的表示.md)
