@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
 
 
 
-## 静态链接和加载
+## 3. 加载 elf 文件
 
 ### 实现 ELF Loader
 
