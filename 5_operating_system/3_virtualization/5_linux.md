@@ -3,10 +3,17 @@
 
 我们已经了解操作系统作为 “状态机的管理者”，通过为应用程序提供 fork, execve, exit, mmap, pipe, open, read, write 等系统调用，配合 C/汇编实现的运行库，就为 “一个进程” 逐步构建出完整的应用世界做好了准备。
 
-这部分内容：完整的应用世界到底是如何构建的？在这节课中，我们用一个 “最小” 的 Linux 系统解答这个问题：
+这部分内容：从理论到实践，Linux 世界到底是如何构建起来的？我们用一个 “最小” 的 Linux 系统的启动、initramfs 的探索，最终看到 systemd 是如何作为 “第一个进程” 真正被启动的。
 - Linux 操作系统
 - Linux 系统启动和 initramfs
 - Linux systemd
+
+
+复习，操作系统是对象+api，
+- 对象：进程、文件、
+- api：开关读写
+
+系统调用之上，封装更好用的api，libc，在此之上构建应用程序，然后有了更多的东西。
 
 ## 1. linux 操作系统
 
@@ -15,6 +22,9 @@
 
 minix 年轻人的第一个全功能操作系统。
 
+minix3，宜都市世界上应用最广的操作系统，因为intel把其移植到了一个固件上。
+
+[如何看待英特尔管理引擎(Intel ME)被爆出运行在 Minix3 操作系统？](https://www.zhihu.com/question/67749141/answer/258836782)
 
 ### linux 的成功
 
@@ -26,31 +36,60 @@ minix 年轻人的第一个全功能操作系统。
 
 2003 后面几年，计算机系统的黄金时代。
 
-
 ### linux kernel
 
-要注意前面是理论模型，并不是具体的那个操作系统。我们好奇 linux 到底符不符合前面的理论模型，我们日常看到的linux，比如 Ubuntu。
+要注意前面学的是**理论模型**，并不是具体的那个操作系统。我们好奇 linux 到底符不符合前面的理论模型，我们日常看到的linux，比如 Ubuntu。
 
 linux 的两面：
-- kernel 
-- kernel 系统调用上的发行版和生态。
+- 1.**kernel** 
+  - 加载第一个进程
+    - 放置一个位于初始状态的状态机
+    - initramfs 模式
+  - 包含一些进程可操作的操作系统对象
+  - 其他的没有了，变成 trap handler
+- 2.**kernel 系统调用上的发行版和应用生态**
+  - 系统工具 coreutils, binutils, systemd, ...
+  - 桌面系统 Gnome, xfce, Android
+  - 应用程序 file manager, vscode, ...
 
 github 上 linux 仅仅只是个内核，kernel。
 
 kernel 可以理解成一个可执行的二进制文件，里面就是个指令序列，然后硬件厂商的固件和磁盘上的其它代码一起加载到内存上运行。运行起来就是 kernel，狭义的内核就是指一个在计算机启动后会被运行的程序，这个程序会加载第一个应用程序，还会创建一些对象，如 /dev/console，信息打印到这里。启动linux可能会发现，打印日志时，突然有一瞬间字体会变，这就是内核做了一些配置。最后启动完毕，对象创建完成，我们就可以使用系统调用操作这些对象了。
 
 广义的 linux，我们看到的，图形界面，鼠标键盘能用，vscode 写代码，浏览器上网。或者 Android，底层也是 linux。所有我们早期使用的，都是linux kernel 系统调用上的发行版和应用生态
-- 系统工具 coreutils, binutils, systemd, ...
-- 桌面系统 Gnome, xfce, Android
-- 应用程序 file manager, vscode, ...
+
 
 ```note
 systemd，pstree 的根，随着我们对操作系统原理的理解越来越好，可以把一个合理的比较抽象的 kernel 概念映射到真实操作系统。后面会讲为什么 systemd 是根，事实上 init 进程并不是 systemd。
-```
 
 如果真想理解 linux 的启动到加载第一个进程的过程，能不能构建一个可以启动的最小的 kernel，然后运行我们自己的程序，一个输出 hello world 的程序，打印 hello world，然后退出。
+```
 
 ## 2. 启动 Linux
+
+回顾计算机的启动，CPU reset，firmware 执行，加载 linux 内核，启动 init 进程。
+
+如果能控制 init 进程，在加载 init 的时候，此时有些什么内核对象呢。
+
+在 ubuntu 更新的时候，可能偶尔会见到 update-initramfs，这个卡的时间比较久。
+
+搞一个最小的 linux，需要的东西，vmlinuz ，init 文件，busybox ，把busybox和init脚本打包，放到一个初始的文件系统里。然后用 qemu 启动，指定使用的内核和使用的文件系统镜像。还指定了当前终端作为一个调试串口。
+
+启动以后，可以发现里面几乎没什么东西，就 `/bin/busybox` `/dev/console` 就这两个。
+
+整个完整的 linux 就基于此来构建。创建出更多的对象。
+
+- 首先要有更多的命令，基于 busybox 的软连接。
+- 然后就可以使用一些命令了，mkdir 创建一些目录，用 mount 挂在 procfs 和 sysfs，在 /dev 下创建一些设备。
+- 输出一些启动日志
+- 最后启动一个 busybox 的 sh。
+
+这时候基本上就能有个完整的linux使用体验了。也就是说，只要加载了第一个我们能控制的 init ，就能创建所有的东西。
+
+
+
+
+
 
 为什么 pstree 的根是 systemd，启动以后我们有个 ramfs，在 ram 里，仅仅供初始化使用，这个时候系统里还没有磁盘。
 
@@ -67,6 +106,30 @@ int pivot_root(const char *new_root, const char *put_old);
 ramfs 的事情是创建好足够多的对象，。
 
 ## 3. 应用程序的世界
+
+到这里，是没有磁盘的，使用 df 命令会报错，这个阶段是启动的初级阶段，内核启动起来了，小的内存里的fs也有了，这时候可以加载必要的驱动程序，如磁盘驱动，挂在必要的fs，最后要做的事情，把根文件系统的控制移交给另一个程序。
+
+看 ubuntu ，pstree 是 systemd，但是 这里的 init 又不是 systemd，。
+
+此时 init 进程还在继续，如果退出以后，一开始启动的脚本还在继续，后面做了更重要的事情，创建了一个新目录，挂载了一个磁盘，然后准备所有的完整的系统需要的东西，最后调用一个 switch_root 这个命令，直接把根目录切换了。
+
+一些要求，调用这个命令的进程的 pid 必须是 1，没有任何一个 libc 会调用此命令，只有最底层的系统开发者才会用到这个。
+
+然后，就成功的得到了一个完整的 linux，直接在机器上跑起来了。对于现在的linux，会在switchroot的时候会去找 /sbin/init。这个就是 systemd。 
+
+刚刚还往文件系统里塞了一个网卡.ko，加载上去，然后可以启动网卡，加一个 ip 地址，这已经是完整的 linux 了，开一个 http 服务器。busbox 提供了一个 httpd，然后就可以访问了。
+
+本质上和云服务器的 systemd 启动一个 Nginx 服务器是一样的。
+
+
+```bash
+python3 -m http.server
+```
+
+
+
+
+
 
 
 ## 操作系统启动后到底做了什么？(2022版未整理)
