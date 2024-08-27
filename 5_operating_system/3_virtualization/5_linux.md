@@ -17,12 +17,11 @@
 
 ## 1. linux 操作系统
 
-
 ### minix
 
 minix 年轻人的第一个全功能操作系统。
 
-minix3，宜都市世界上应用最广的操作系统，因为intel把其移植到了一个固件上。
+minix3，一度是世界上应用最广的操作系统，因为 intel 把其移植到了一个固件上。
 
 [如何看待英特尔管理引擎(Intel ME)被爆出运行在 Minix3 操作系统？](https://www.zhihu.com/question/67749141/answer/258836782)
 
@@ -38,7 +37,7 @@ minix3，宜都市世界上应用最广的操作系统，因为intel把其移植
 
 ### linux kernel
 
-要注意前面学的是**理论模型**，并不是具体的那个操作系统。我们好奇 linux 到底符不符合前面的理论模型，我们日常看到的linux，比如 Ubuntu。
+要注意前面学的是**理论模型**，并不是具体的哪个操作系统(虽然有时候会用 linux 的 api 举例)。我们好奇 linux 到底符不符合前面的理论模型，我们日常看到的 linux，比如 Ubuntu。
 
 linux 的两面：
 - 1.**kernel** 
@@ -126,13 +125,13 @@ ramfs 的事情是创建好足够多的对象，。
 python3 -m http.server
 ```
 
+另一个想象，这些程序甚至不需要跑在 linux kernel 上，只要实现了 linux 的系统调用，然后就能运行起来 linux 的程序了。linux subsystem for Linux，用所有的 windows api 实现
 
 
 
 
 
-
-## 操作系统启动后到底做了什么？(2022版未整理)
+## 总结(2022版未整理)
 
 - 操作系统启动后到底做了什么？ 
   - CPU Reset → Firmware → Loader → Kernel _start() → 执行第一个程序 /bin/init → 中断/异常处理程序
