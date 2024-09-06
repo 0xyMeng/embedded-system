@@ -2,6 +2,8 @@
 
 - [计算机与嵌入式开发学习](README.md)
 - [1-1.编程基础](./1_program_basic/README.md)
+  - [C 语言相关](./1_program_basic/1_language/1_c/README.md)
+  - [数据结构和算法](./1_program_basic/2_data_strcut/README.md)
   - [基本工具和使用](./1_program_basic/6_missing_class/README.md)
     - [shell](./1_program_basic/6_missing_class/1_shell.md)
     - [shell 脚本](./1_program_basic/6_missing_class/2_shell_script.md)
