@@ -39,10 +39,6 @@ int main()
 }
 ```
 
-
-
-
-
 ## 读取一个字符串
 
 ```c
@@ -68,5 +64,47 @@ scanf("%[^/n]", str);
 ```
 
 
+## C 库中的一些函数
 
+快速排序在 `stdlib.h` 中，声明如下
+
+```c
+void qsort(void *base, size_t num, size_t size, int (*compar)(const void *, const void *));
+```
+- base: 指向要排序的数组的指针。
+- num: 数组中元素的数量。
+- size: 数组中每个元素的大小（以字节为单位）。
+- compar: 指向用于比较两个元素的函数的指针。该函数接受两个 const void* 类型的参数，并返回一个 int 值：
+  - 如果第一个元素小于第二个元素，返回负值。
+  - 如果第一个元素等于第二个元素，返回 0。
+  - 如果第一个元素大于第二个元素，返回正值。
+
+因为不知道要排序的是什么类型的值，所以都用了 void* ，需要自己实现一个两个元素比较的函数。使用示例
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+// 比较函数：升序排序
+int compare_ints(const void *a, const void *b) {
+    int int_a = *(int *)a;
+    int int_b = *(int *)b;
+    return (int_a > int_b) - (int_a < int_b);  // 相当于 int_a - int_b，但避免溢出问题
+}
+
+int main() {
+    int values[] = { 88, 56, 100, 2, 25, 15 };
+    size_t num_values = sizeof(values) / sizeof(values[0]);
+
+    // 使用 qsort 对数组进行排序
+    qsort(values, num_values, sizeof(int), compare_ints);
+
+    // 打印排序后的结果
+    for (size_t i = 0; i < num_values; i++) {
+        printf("%d ", values[i]);
+    }
+
+    return 0;
+}
+```
 
