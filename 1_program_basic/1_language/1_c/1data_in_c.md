@@ -5,9 +5,14 @@ sort: 1
 
 
 - 数据定义相关关键字
-- 字符串
 - 输入输出函数
-- sizeof 运算符
+- `sizeof()` 运算符
+- `scanf()`
+- `printf()`
+- 字符串，创建和存储
+- `strlen()`
+- 关键字 `const`
+- `#define` 和 `const`
 
 
 ## 数据类型关键字
