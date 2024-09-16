@@ -108,3 +108,15 @@ int main() {
 }
 ```
 
+
+## 代码测试
+
+ACM 模式下在自己的电脑上做测试。
+
+准备好测试用例。
+
+```bash
+diff <(cat bottle_case | ./a.out) bottle_out
+```
+
+
