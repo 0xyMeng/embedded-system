@@ -84,8 +84,29 @@ while(ch != EOF)
 
 
 
+## 文件 I/O 
 
+### fprintf() fscanf()
 
+printf 和 scanf 的文件版，第一参数为文件指针，其他的用法全都一样。
+
+### fgets() fputs()
+
+gets 和 puts 的文件版，
+
+### 随机访问 fseek() ftell()
+
+文件可以看做是一个数组，前面的 API 并没有明显的指出文件的位置。
+
+fseek() 可以设置读取的位置。
+
+### fgetpos() fsetpos()
+
+## 更多的标准 IO
+
+### fflush()
+
+### 二进制 IO fread() fwrite()
 
 
 

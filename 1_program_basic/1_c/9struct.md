@@ -311,7 +311,7 @@ float point;
 
 这样是可以的，
 
-## typedef
+## typedef 和复杂类型
 
 常用于高级数据的定义，和 #define 有一点点像
 - typedef 只用于类型，不用于值
@@ -323,6 +323,64 @@ typedef 可以设计来提高程序的可移植性，如 sizeof 的返回类型 
 
 最重要的，常用来给复杂类型命名，大大增加程序的可读性。
 
+```c
+typedef void (*sighandler_t)(int);
+
+sighandler_t signal(int signum, sighandler_t handler);
+```
+
+来分析一下复杂形式的类型定义。在复杂形式中，常见符号的含义
+- `*` 表示一个指针
+- `()` 表示一个函数
+- `[]` 表示一个数组
+
+在定义类型之前，先看看优先级 `[]` 和 `()` 的优先级相同，高于 `*` 举例说明 
+- 如 `int * risks[10]` 是一个数组，数组里为指向 int 的指针
+- 如 `int (* rusks)[10]` 优先级相同，从左往右，rusks 是一个指针，指向数组，数组含有 10 个 int 元素
+- 如 `int goods[12][50]` 是一个含有 12 个元素的数组，每个元素是一个含有 50 个 int 元素的数组
+- 如 `int *oof[3][4]` 是一个二维数组，每个元素为 int 类型的指针
+- 如 `int (*uuf)[3][4]` 从左往右看，是一个指针，指向一个二维数组，每个元素都是 int 型
+
+一个帮助理解的例子
+```c
+typedef int arr5_t[5];    /* arr5 是个新类型名 */
+typedef arr5_t * arr5p_t;
+typedef arr5p_t arrp_t[10];
+arrp_t arr;
+```
+
+函数指针在一些编程中是常用的。比如 C 库函数中 qsort
+```c
+void qsort(void *base, size_t num, size_t size, int (*compar)(const void *, const void *));
+```
+
+最后一个参数，分析一下，这是个指针，指向一个函数，这个函数有两个参数，返回一个整数值。
+
+C 库中的 qsort 可以处理任意类型的数组，但是要告诉此函数使用那个函数来比较元素的大小，然后 qsort 使用用户提供的函数来进行单个元素的比较，无论数组中是整数、字符串还是结构。
+
+声明函数指针的一个方法，先声明一个函数
+
+```c
+int compare(const void *, const void *);        /* 先声明一个函数 */
+int (*compare)(const void *, const void *);     /* 替换函数名 */
+```
+
+使用函数指针访问函数的方式，有两种逻辑上不一致的语法
+
+```c
+(*compare)(&num1, &num2);
+compare(&num1, &num2);
+```
+
+*compare 相当于解引用，但是函数名本身就是地址，那么指针和函数名时可以互换使用的，因此世界使用 compare 是可以的。
+
+函数指针作为函数参数的用法是很常见的，比如下面这个例子，这在 linux 里是真实存在的
+
+```c
+void (*ret)signal(int signum, void (*handler)(int))(int);
+```
+
+使用 typedef 来提高一下可读性
 ```c
 typedef void (*sighandler_t)(int);
 
