@@ -1,7 +1,14 @@
 ---
 sort: 1
 ---
-# C语言基础
+# C 语言基础
+
+参考资料
+- <C Premier Plus>
+- <Expert C Programming>
+- <C Traps and Pitfalls>
+
+
 
 - C 初步
 - 

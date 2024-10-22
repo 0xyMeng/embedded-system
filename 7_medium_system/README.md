@@ -3,14 +3,10 @@ sort: 2
 ---
 # 中等规模系统开发(RTOS)
 
-
-
 - LVGL 
 - rt-thread 基本使用
 - rt-thread 中的外设
 - rt-thread 中的多任务
-
-
 
 ```note
 下面这段我写在 2023.07.26 ，此时再来回顾当年学习 stm32 裸机开发。
@@ -31,4 +27,52 @@ RTOS 为实时操作系统，如果有人也是刚用过裸机开开发，那么
 LVGL 是使用 C 语言开发的，但是使用了面向对象开发的思想，而且继承等行为在图形上是可视化的，可以更容易的理解程序里的抽象概念。而且 LVGL 里图形库的 C 语言编码方式也是值得学习的。
 
 因此，在学习 rtthread 前，可以先在裸机上做一个基于 LGVL 的小项目，后面再使用 rtthread 时候会容易很多。
+
+
+## 轮询
+
+```c
+#include "stm32f10x.h"
+
+int main(void)
+{
+    hardware_init();
+
+    while (1)
+    {
+        task1();
+        task2();
+        task3();
+        delay_ms(10);
+    }
+}
+```
+
+
+```c
+int irq1_flag = 0;
+int irq2_flag = 0;
+
+int main(void)
+{
+    hardware_init();
+
+    while (1)
+    {
+        task1();
+        task2();
+        task3();
+        delay_ms(10);
+    }
+}
+
+void irq1(void)
+{
+
+}
+```
+
+
+
+
 
